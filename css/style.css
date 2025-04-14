@@ -424,6 +424,7 @@ main {
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s;
+    position: relative;
 }
 
 .tool-btn:hover {
@@ -833,4 +834,89 @@ main {
     justify-content: space-between;
     align-items: center;
     padding-left: 15px !important;
+}
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    z-index: 1000;
+    font-family: Vazirmatn;
+    margin-bottom: 5px;
+    width: max-content;
+    max-width: 300px;
+    text-align: center;
+}
+
+[data-tooltip]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    margin-bottom: -1px;
+}
+
+/* Custom Tooltip Styles */
+.tool-btn::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.85em;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    font-family: Vazirmatn;
+    z-index: 1000;
+}
+
+.tool-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.tool-btn:hover::before,
+.tool-btn:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] .tool-btn::before {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+[data-theme="dark"] .tool-btn::after {
+    border-top-color: rgba(255, 255, 255, 0.9);
 } 

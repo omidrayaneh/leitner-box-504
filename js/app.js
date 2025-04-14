@@ -778,4 +778,128 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-} 
+}
+
+// اضافه کردن متغیر برای لغات شخصی
+if (!window.customWords) {
+    window.customWords = [];
+}
+
+// اضافه کردن دکمه افزودن لغت جدید
+const addNewWordBtn = document.createElement('button');
+addNewWordBtn.className = 'tool-btn';
+addNewWordBtn.title = 'افزودن لغت جدید';
+addNewWordBtn.innerHTML = '<i class="fas fa-plus"></i>';
+document.querySelector('.card-tools').appendChild(addNewWordBtn);
+
+// به‌روزرسانی tooltip های دکمه‌های موجود
+addNoteBtn.title = 'افزودن یادداشت';
+addImageBtn.title = 'افزودن تصویر';
+addExampleBtn.title = 'افزودن مثال';
+
+// Event listener برای دکمه افزودن لغت جدید
+addNewWordBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    
+    Swal.fire({
+        title: 'افزودن لغت جدید',
+        html: `
+            <div class="new-word-form" style="text-align: right; direction: rtl;">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">لغت:</label>
+                    <input id="new-word" class="swal2-input" placeholder="لغت انگلیسی را وارد کنید" style="direction: ltr; text-align: left;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">تلفظ:</label>
+                    <input id="new-pronunciation" class="swal2-input" placeholder="تلفظ را وارد کنید" style="direction: ltr; text-align: left;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">معنی:</label>
+                    <input id="new-meaning" class="swal2-input" placeholder="معنی فارسی را وارد کنید">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">مثال:</label>
+                    <textarea id="new-example" class="swal2-textarea" placeholder="یک مثال به انگلیسی وارد کنید" style="direction: ltr; text-align: left;"></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">مترادف‌ها:</label>
+                    <input id="new-synonyms" class="swal2-input" placeholder="مترادف‌ها را با کاما جدا کنید" style="direction: ltr; text-align: left;">
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'افزودن',
+        cancelButtonText: 'انصراف',
+        customClass: {
+            popup: 'swal2-rtl',
+            confirmButton: 'swal2-confirm-button',
+            cancelButton: 'swal2-cancel-button'
+        },
+        preConfirm: () => {
+            const word = document.getElementById('new-word').value.trim();
+            const pronunciation = document.getElementById('new-pronunciation').value.trim();
+            const meaning = document.getElementById('new-meaning').value.trim();
+            const example = document.getElementById('new-example').value.trim();
+            const synonyms = document.getElementById('new-synonyms').value.trim();
+
+            if (!word || !meaning) {
+                Swal.showValidationMessage('لغت و معنی اجباری هستند');
+                return false;
+            }
+
+            return { word, pronunciation, meaning, example, synonyms };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const { word, pronunciation, meaning, example, synonyms } = result.value;
+            
+            // ساخت لغت جدید
+            const newWord = {
+                id: window.customWords.length + 1000, // شروع از 1000 برای جلوگیری از تداخل با لغات اصلی
+                word: word,
+                pronunciation: pronunciation,
+                meaning: meaning,
+                example: example,
+                synonyms: synonyms,
+                difficulty: 1,
+                isCustom: true // نشانه‌گذاری به عنوان لغت شخصی
+            };
+
+            // اضافه کردن به لیست لغات شخصی
+            window.customWords.push(newWord);
+            
+            // اضافه کردن به جعبه اول
+            window.boxes.box1.push(newWord);
+            
+            // ذخیره در localStorage
+            localStorage.setItem('customWords', JSON.stringify(window.customWords));
+            saveState();
+
+            Toast.fire({
+                icon: 'success',
+                title: 'لغت جدید با موفقیت اضافه شد'
+            });
+        }
+    });
+});
+
+// بازیابی لغات شخصی در هنگام بارگذاری
+document.addEventListener('DOMContentLoaded', () => {
+    const savedCustomWords = localStorage.getItem('customWords');
+    if (savedCustomWords) {
+        window.customWords = JSON.parse(savedCustomWords);
+        
+        // اضافه کردن لغات شخصی به جعبه مناسب
+        window.customWords.forEach(word => {
+            if (!window.boxes.box1.some(w => w.word === word.word)) {
+                window.boxes.box1.push(word);
+            }
+        });
+    }
+    
+    loadSettings();
+    
+    if (!currentWord) {
+        showNewCard();
+    }
+}); 
