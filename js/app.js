@@ -62,18 +62,65 @@ const Toast = Swal.mixin({
 });
 
 // تنظیمات پیش‌فرض برای همه پیام‌های SweetAlert2
-Swal.defaultParams = {
-    confirmButtonText: 'تأیید',
-    cancelButtonText: 'انصراف',
+Swal.mixin({
     customClass: {
-        popup: 'swal2-rtl',
-        title: 'swal2-title-rtl',
-        htmlContainer: 'swal2-html-rtl',
-        confirmButton: 'swal2-confirm-rtl',
-        cancelButton: 'swal2-cancel-rtl',
-        denyButton: 'swal2-deny-rtl'
+        confirmButton: 'swal2-button',
+        cancelButton: 'swal2-button',
+        denyButton: 'swal2-button'
+    },
+    buttonsStyling: false
+});
+
+// اضافه کردن استایل به head
+const style = document.createElement('style');
+style.textContent = `
+    .swal2-popup {
+        font-family: Vazirmatn !important;
     }
-};
+    .swal2-title, 
+    .swal2-html-container,
+    .swal2-input,
+    .swal2-textarea {
+        font-family: Vazirmatn !important;
+    }
+    .swal2-button {
+        font-family: Vazirmatn !important;
+        font-size: 1em !important;
+        margin: 5px !important;
+        padding: 8px 20px !important;
+        border-radius: 5px !important;
+        transition: all 0.3s ease !important;
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border: none !important;
+    }
+    .swal2-button.swal2-cancel-button {
+        background-color: #f44336 !important;
+    }
+    .swal2-button:hover {
+        opacity: 0.9 !important;
+        transform: translateY(-1px) !important;
+    }
+    .custom-example {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .example-actions {
+        display: flex;
+        gap: 5px;
+    }
+    .example-delete-btn {
+        color: #dc3545;
+        cursor: pointer;
+        padding: 2px 5px;
+        font-size: 0.9em;
+    }
+    .example-delete-btn:hover {
+        color: #bd2130;
+    }
+`;
+document.head.appendChild(style);
 
 // بازیابی تنظیمات و وضعیت
 function loadSettings() {
@@ -439,7 +486,59 @@ function saveWordData(word, data) {
     localStorage.setItem(key, JSON.stringify(data));
 }
 
-// Load word data
+// تغییر در نمایش مثال‌های شخصی
+function addCustomExample(example, data, currentWord) {
+    const li = document.createElement('li');
+    li.className = 'example-item custom-example';
+    
+    const exampleText = document.createElement('span');
+    exampleText.textContent = example;
+    li.appendChild(exampleText);
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'example-actions';
+    
+    const deleteBtn = document.createElement('i');
+    deleteBtn.className = 'fas fa-trash example-delete-btn';
+    deleteBtn.title = 'حذف مثال';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        Swal.fire({
+            title: 'حذف مثال',
+            text: 'آیا از حذف این مثال اطمینان دارید؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، حذف شود',
+            cancelButtonText: 'انصراف',
+            customClass: {
+                popup: 'swal2-rtl',
+                confirmButton: 'swal2-styled swal2-confirm',
+                cancelButton: 'swal2-styled swal2-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const exampleIndex = data.examples.indexOf(example);
+                if (exampleIndex > -1) {
+                    data.examples.splice(exampleIndex, 1);
+                    saveWordData(currentWord, data);
+                    li.remove();
+                    
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'مثال با موفقیت حذف شد'
+                    });
+                }
+            }
+        });
+    });
+    
+    actionsDiv.appendChild(deleteBtn);
+    li.appendChild(actionsDiv);
+    examplesList.appendChild(li);
+}
+
+// به‌روزرسانی نحوه نمایش مثال‌ها
 function loadWordData(word) {
     const data = getWordData(word);
     
@@ -458,14 +557,16 @@ function loadWordData(word) {
     // Update examples
     examplesList.innerHTML = '';
     const defaultExample = document.getElementById('example').textContent;
-    examplesList.innerHTML = `<li class="example-item">${defaultExample}</li>`;
+    if (defaultExample) {
+        const li = document.createElement('li');
+        li.className = 'example-item';
+        li.textContent = defaultExample;
+        examplesList.appendChild(li);
+    }
     
     if (data.examples && data.examples.length > 0) {
         data.examples.forEach(example => {
-            const li = document.createElement('li');
-            li.className = 'example-item';
-            li.textContent = example;
-            examplesList.appendChild(li);
+            addCustomExample(example, data, word);
         });
     }
     
@@ -622,10 +723,7 @@ addExampleBtn.addEventListener('click', (e) => {
             data.examples.push(result.value);
             saveWordData(currentWord, data);
             
-            const li = document.createElement('li');
-            li.className = 'example-item custom-example';
-            li.textContent = result.value;
-            examplesList.appendChild(li);
+            addCustomExample(result.value, data, currentWord);
             
             Toast.fire({
                 icon: 'success',

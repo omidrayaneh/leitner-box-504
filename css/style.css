@@ -715,4 +715,122 @@ main {
     .notes-tips {
         font-size: 0.85em !important;
     }
+}
+
+.vazir-font {
+    font-family: Vazirmatn !important;
+}
+
+.swal2-popup .swal2-styled.swal2-confirm,
+.swal2-popup .swal2-styled.swal2-cancel {
+    font-family: Vazirmatn !important;
+}
+
+.swal2-container {
+    font-family: Vazirmatn;
+}
+
+.swal2-button {
+    font-family: Vazirmatn !important;
+    font-size: 1em !important;
+    margin: 5px !important;
+    padding: 8px 20px !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.delete-confirm-btn {
+    background-color: #dc3545 !important;
+    color: white !important;
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3) !important;
+    font-family: Vazirmatn !important;
+    font-size: 1em !important;
+    padding: 8px 20px !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+}
+
+.delete-confirm-btn:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4) !important;
+}
+
+.delete-cancel-btn {
+    background-color: #6c757d !important;
+    color: white !important;
+    box-shadow: 0 2px 5px rgba(108, 117, 125, 0.3) !important;
+    font-family: Vazirmatn !important;
+    font-size: 1em !important;
+    padding: 8px 20px !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+}
+
+.delete-cancel-btn:hover {
+    background-color: #5a6268 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Override SweetAlert2 default button styles */
+.swal2-actions .swal2-confirm.delete-confirm-btn {
+    background-color: #dc3545 !important;
+}
+
+.swal2-actions .swal2-cancel.delete-cancel-btn {
+    background-color: #6c757d !important;
+}
+
+/* SweetAlert2 button styles */
+.swal2-confirm-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+    font-family: Vazirmatn !important;
+}
+
+.swal2-cancel-button {
+    background-color: #6c757d !important;
+    color: white !important;
+    font-family: Vazirmatn !important;
+}
+
+/* Override SweetAlert2 default button styles */
+.swal2-styled.swal2-confirm {
+    background-color: #dc3545 !important;
+}
+
+.swal2-styled.swal2-cancel {
+    background-color: #6c757d !important;
+}
+
+.example-delete-btn {
+    color: #dc3545;
+    cursor: pointer;
+    padding: 2px 5px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.example-delete-btn:hover {
+    color: #c82333;
+    transform: scale(1.1);
+}
+
+.example-actions {
+    display: flex;
+    gap: 5px;
+    margin-right: 10px;
+}
+
+.custom-example {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 15px !important;
 } 

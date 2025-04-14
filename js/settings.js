@@ -437,4 +437,34 @@ function showSortedWords(words) {
         width: '80%',
         confirmButtonText: 'بستن'
     });
+}
+
+function resetSettings() {
+    Swal.fire({
+        title: 'بازنشانی تنظیمات',
+        text: 'آیا مطمئن هستید که می‌خواهید همه تنظیمات را به حالت اولیه برگردانید؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'بله، بازنشانی شود',
+        cancelButtonText: 'انصراف',
+        customClass: {
+            popup: 'swal2-rtl',
+            title: 'swal2-rtl',
+            htmlContainer: 'swal2-rtl',
+            confirmButton: 'swal2-button vazir-font',
+            cancelButton: 'swal2-button vazir-font'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.clear();
+            Swal.fire({
+                title: 'انجام شد!',
+                text: 'همه اطلاعات بازنشانی شد.',
+                icon: 'success',
+                confirmButtonText: 'باشه'
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+    });
 } 
