@@ -35,12 +35,17 @@ function loadSettings() {
     const settings = JSON.parse(localStorage.getItem('leitnerSettings') || '{}');
     
     // اندازه فونت
-    document.documentElement.style.setProperty('--font-size', `${settings.fontSize || 16}px`);
-    fontSizeSlider.value = settings.fontSize || 16;
-    fontSizeValue.textContent = `${settings.fontSize || 16}px`;
+    const fontSize = settings.fontSize || 16;
+    document.documentElement.style.fontSize = `${fontSize}px`;
+    fontSizeSlider.value = fontSize;
+    fontSizeValue.textContent = `${fontSize}px`;
     
     // حالت تاریک
-    document.body.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
+    if (settings.darkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
     darkModeToggle.checked = settings.darkMode || false;
     
     // تعداد سوال روزانه
@@ -201,13 +206,17 @@ document.addEventListener('DOMContentLoaded', () => {
     fontSizeSlider.addEventListener('input', (e) => {
         const size = e.target.value;
         fontSizeValue.textContent = `${size}px`;
-        document.documentElement.style.setProperty('--font-size', `${size}px`);
+        document.documentElement.style.fontSize = `${size}px`;
         saveSettings();
     });
 
     // تغییر حالت تاریک/روشن
     darkModeToggle.addEventListener('change', (e) => {
-        document.body.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
+        if (e.target.checked) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
         saveSettings();
     });
 
