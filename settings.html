@@ -160,6 +160,72 @@
         #restoreFile {
             display: none;
         }
+
+        /* New Styles */
+        .form-select {
+            width: 200px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Vazirmatn';
+        }
+
+        input[type="time"] {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Vazirmatn';
+        }
+
+        .sorted-words {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-color);
+            border-radius: 4px;
+        }
+
+        .word-text {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .word-box {
+            color: var(--primary-color);
+            background: rgba(33, 150, 243, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .word-review {
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        .word-difficulty {
+            color: var(--warning-color);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .word-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -226,6 +292,40 @@
                             <i class="fas fa-box"></i>
                             نمایش وضعیت
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>تنظیمات زمان مرور</h2>
+                <div class="setting-item">
+                    <label for="reviewTimeInput">ساعت یادآوری مرور روزانه</label>
+                    <div class="setting-controls">
+                        <input type="time" id="reviewTimeInput" value="09:00">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label for="notificationToggle">فعال‌سازی نوتیفیکیشن</label>
+                    <div class="setting-controls">
+                        <label class="switch">
+                            <input type="checkbox" id="notificationToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>مرتب‌سازی لغات</h2>
+                <div class="setting-item">
+                    <label for="sortTypeSelect">نحوه مرتب‌سازی لغات</label>
+                    <div class="setting-controls">
+                        <select id="sortTypeSelect" class="form-select">
+                            <option value="alphabetical">بر اساس حروف الفبا</option>
+                            <option value="difficulty">بر اساس سختی</option>
+                            <option value="box">بر اساس جعبه</option>
+                            <option value="lastReview">بر اساس آخرین مرور</option>
+                        </select>
                     </div>
                 </div>
             </div>
