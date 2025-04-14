@@ -218,38 +218,57 @@ main {
 }
 
 .control-btn {
-    padding: 12px 30px;
+    padding: 1rem 2rem;
     border: none;
     border-radius: 8px;
+    font-family: 'Vazirmatn', sans-serif !important;
+    font-size: 1rem;
     cursor: pointer;
-    font-size: 1em;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     transition: all 0.3s ease;
-    min-width: 120px;
+}
+
+.control-btn i {
+    font-size: 1.2rem;
+}
+
+.control-btn.correct {
+    background-color: #28a745;
+    color: white;
+}
+
+.control-btn.wrong {
+    background-color: #dc3545;
+    color: white;
 }
 
 .control-btn:hover {
     transform: translateY(-2px);
+    opacity: 0.9;
 }
 
-.control-btn.wrong {
-    background-color: var(--danger-color);
-    color: white;
+.control-btn:active {
+    transform: translateY(0);
 }
 
-.control-btn.wrong:hover {
-    background-color: #c82333;
+/* SweetAlert2 Customization */
+.swal2-popup {
+    font-family: 'Vazirmatn', sans-serif !important;
 }
 
-.control-btn.correct {
-    background-color: var(--success-color);
-    color: white;
+.swal2-title {
+    font-family: 'Vazirmatn', sans-serif !important;
 }
 
-.control-btn.correct:hover {
-    background-color: #218838;
+.swal2-html-container {
+    font-family: 'Vazirmatn', sans-serif !important;
+}
+
+.swal2-confirm, .swal2-cancel, .swal2-deny {
+    font-family: 'Vazirmatn', sans-serif !important;
+    padding: 0.5rem 1.5rem !important;
 }
 
 /* Responsive Design */

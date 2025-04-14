@@ -9,6 +9,20 @@ const restoreFile = document.getElementById('restoreFile');
 const resetBtn = document.getElementById('resetBtn');
 const showBoxStatusBtn = document.getElementById('showBoxStatusBtn');
 
+// تنظیمات پیش‌فرض SweetAlert2
+Swal.defaultParams = {
+    confirmButtonText: 'تأیید',
+    cancelButtonText: 'انصراف',
+    customClass: {
+        popup: 'swal2-rtl',
+        title: 'swal2-title-rtl',
+        htmlContainer: 'swal2-html-rtl',
+        confirmButton: 'swal2-confirm-rtl',
+        cancelButton: 'swal2-cancel-rtl',
+        denyButton: 'swal2-deny-rtl'
+    }
+};
+
 // Settings keys
 const SETTINGS_KEYS = {
     FONT_SIZE: 'fontSize',

@@ -43,6 +43,29 @@ const stats = {
     lastReviewDate: null
 };
 
+// تنظیمات پیش‌فرض SweetAlert2
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true
+});
+
+// تنظیمات پیش‌فرض برای همه پیام‌های SweetAlert2
+Swal.defaultParams = {
+    confirmButtonText: 'تأیید',
+    cancelButtonText: 'انصراف',
+    customClass: {
+        popup: 'swal2-rtl',
+        title: 'swal2-title-rtl',
+        htmlContainer: 'swal2-html-rtl',
+        confirmButton: 'swal2-confirm-rtl',
+        cancelButton: 'swal2-cancel-rtl',
+        denyButton: 'swal2-deny-rtl'
+    }
+};
+
 // بازیابی تنظیمات و وضعیت
 function loadSettings() {
     const savedSettings = localStorage.getItem('leitnerSettings');
