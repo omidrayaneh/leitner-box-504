@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم لایتنر 504</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>سیستم لایتنر 504</h1>
+            <nav>
+                <button id="settingsBtn">تنظیمات</button>
+                <button id="statsBtn">آمار</button>
+                <button id="helpBtn">راهنما</button>
+            </nav>
+        </header>
+
+        <main>
+            <div class="card-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h2 id="wordTitle" class="word-title"></h2>
+                            <p id="pronunciation" class="pronunciation"></p>
+                            <button id="playPronunciation" class="sound-btn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                        </div>
+                        <div class="card-back">
+                            <h3>معنی:</h3>
+                            <p id="meaning" class="meaning"></p>
+                            <h3>مثال:</h3>
+                            <p id="example" class="example"></p>
+                            <h3>مترادف‌ها:</h3>
+                            <p id="synonyms" class="synonyms"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="wrongBtn" class="control-btn wrong">نادرست</button>
+                <button id="correctBtn" class="control-btn correct">درست</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>تنظیمات</h2>
+            <div class="setting-item">
+                <label for="fontSizeSlider">اندازه فونت:</label>
+                <div class="slider-container">
+                    <input type="range" id="fontSizeSlider" min="12" max="24" value="16">
+                    <span id="fontSizeValue">16px</span>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label for="darkModeToggle">حالت تاریک:</label>
+                <input type="checkbox" id="darkModeToggle">
+            </div>
+            <div class="setting-item">
+                <label for="dailyLimitInput">تعداد سوال روزانه:</label>
+                <input type="number" id="dailyLimitInput" min="5" max="100" value="20">
+            </div>
+            <div class="setting-item">
+                <button id="showBoxStatusBtn">مشاهده وضعیت جعبه‌ها</button>
+            </div>
+            <div class="setting-item">
+                <button id="resetBtn" class="danger-btn">شروع مجدد</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/words.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
