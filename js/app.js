@@ -1,22 +1,18 @@
 // DOM Elements
-const flashcard = document.querySelector('.flashcard');
-const wordTitle = document.getElementById('wordTitle');
+const wordNumber = document.getElementById('wordNumber');
+const wordText = document.getElementById('wordText');
 const pronunciation = document.getElementById('pronunciation');
-const meaning = document.getElementById('meaning');
+const definition = document.getElementById('definition');
 const example = document.getElementById('example');
-const playPronunciationBtn = document.getElementById('playPronunciation');
+const synonyms = document.getElementById('synonyms');
+const soundButton = document.getElementById('soundButton');
 const wrongBtn = document.getElementById('wrongBtn');
 const correctBtn = document.getElementById('correctBtn');
-const flipBtn = document.getElementById('flipBtn');
-const settingsBtn = document.getElementById('settingsBtn');
-const statsBtn = document.getElementById('statsBtn');
-const helpBtn = document.getElementById('helpBtn');
-const settingsModal = document.getElementById('settingsModal');
-const fontSizeSlider = document.getElementById('fontSizeSlider');
-const darkModeToggle = document.getElementById('darkModeToggle');
-const resetBtn = document.getElementById('resetBtn');
+const flashcard = document.querySelector('.flashcard');
 
 let currentWord = null;
+let isFlipped = false;
+let isPlaying = false;
 
 // تنظیمات
 const settings = {
@@ -47,7 +43,7 @@ const stats = {
     lastReviewDate: null
 };
 
-// بازیابی تنظیمات
+// بازیابی تنظیمات و وضعیت
 function loadSettings() {
     const savedSettings = localStorage.getItem('leitnerSettings');
     if (savedSettings) {
@@ -79,44 +75,19 @@ function loadSettings() {
         localStorage.setItem('lastReviewDate', new Date().toDateString());
         localStorage.setItem('dailyQuestionCount', '0');
     }
+
+    // بازیابی کلمه فعلی
+    const savedCurrentWord = localStorage.getItem('currentWord');
+    if (savedCurrentWord) {
+        currentWord = JSON.parse(savedCurrentWord);
+        displayWord(currentWord);
+    }
 }
 
 // اعمال تنظیمات
 function applySettings() {
     document.documentElement.style.setProperty('--font-size', `${settings.fontSize}px`);
     document.body.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
-    fontSizeSlider.value = settings.fontSize;
-    darkModeToggle.checked = settings.darkMode;
-}
-
-// ذخیره تنظیمات
-function saveSettings() {
-    localStorage.setItem('leitnerSettings', JSON.stringify(settings));
-}
-
-// ذخیره وضعیت
-function saveState() {
-    localStorage.setItem('boxes', JSON.stringify(window.boxes));
-    localStorage.setItem('boxIndices', JSON.stringify(boxIndices));
-}
-
-// نمایش وضعیت جعبه‌ها
-function showBoxStatus() {
-    Swal.fire({
-        title: 'وضعیت جعبه‌ها',
-        html: `
-            <div dir="rtl">
-                <p>جعبه ۱ (روزانه): ${window.boxes.box1.length} لغت</p>
-                <p>جعبه ۲ (هر ۲ روز): ${window.boxes.box2.length} لغت</p>
-                <p>جعبه ۳ (هر ۴ روز): ${window.boxes.box3.length} لغت</p>
-                <p>جعبه ۴ (هر ۷ روز): ${window.boxes.box4.length} لغت</p>
-                <p>جعبه ۵ (هر ۱۵ روز): ${window.boxes.box5.length} لغت</p>
-                <hr>
-                <p>تعداد سوالات امروز: ${dailyQuestionCount} از ${settings.dailyLimit}</p>
-            </div>
-        `,
-        confirmButtonText: 'بستن'
-    });
 }
 
 // نمایش کارت جدید
@@ -180,6 +151,8 @@ function showNewCard() {
         dailyQuestionCount++;
         localStorage.setItem('dailyQuestionCount', dailyQuestionCount.toString());
         localStorage.setItem('boxIndices', JSON.stringify(boxIndices));
+        // ذخیره کلمه فعلی
+        localStorage.setItem('currentWord', JSON.stringify(currentWord));
     } else {
         Swal.fire({
             title: 'تبریک!',
@@ -192,72 +165,81 @@ function showNewCard() {
 
 // پخش تلفظ کلمه
 function playPronunciation(word) {
+    if (isPlaying) return;
+
     const utterance = new SpeechSynthesisUtterance(word);
-    utterance.rate = 0.8; // سرعت آهسته‌تر برای وضوح بیشتر
-    utterance.lang = 'en-US'; // تنظیم زبان به انگلیسی آمریکایی
+    utterance.rate = 0.8;
+    utterance.lang = 'en-US';
     
-    // پیدا کردن صدای آمریکایی مناسب
-    const voices = speechSynthesis.getVoices();
-    const americanVoice = voices.find(voice => 
-        voice.lang.includes('en-US') && 
-        voice.name.includes('Female') // ترجیحا صدای زن
-    );
-    
-    if (americanVoice) {
-        utterance.voice = americanVoice;
-    }
-
     // تغییر آیکون به حالت در حال پخش
-    const soundButton = document.getElementById('playPronunciation');
-    let icon = soundButton.querySelector('i');
-    
-    // اگر المان آیکون وجود نداشت، آن را ایجاد کن
-    if (!icon) {
-        icon = document.createElement('i');
-        icon.className = 'fas fa-volume-up';
-        soundButton.innerHTML = '';
-        soundButton.appendChild(icon);
-    }
-
-    // تغییر آیکون به حالت در حال پخش
+    const icon = soundButton.querySelector('i');
     icon.className = 'fas fa-spinner fa-spin';
     soundButton.disabled = true;
+    isPlaying = true;
+
+    // اطمینان از بارگذاری صداها
+    let voices = speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        // اگر صداها هنوز بارگذاری نشده‌اند، منتظر بمانید
+        speechSynthesis.addEventListener('voiceschanged', () => {
+            voices = speechSynthesis.getVoices();
+            const americanVoice = voices.find(voice => 
+                voice.lang.includes('en-US') && 
+                voice.name.includes('Female')
+            ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
+            
+            if (americanVoice) {
+                utterance.voice = americanVoice;
+            }
+            speechSynthesis.speak(utterance);
+        }, { once: true });
+    } else {
+        const americanVoice = voices.find(voice => 
+            voice.lang.includes('en-US') && 
+            voice.name.includes('Female')
+        ) || voices.find(voice => voice.lang.includes('en-US')) || voices[0];
+        
+        if (americanVoice) {
+            utterance.voice = americanVoice;
+        }
+        speechSynthesis.speak(utterance);
+    }
 
     // بعد از اتمام پخش
     utterance.onend = () => {
         icon.className = 'fas fa-volume-up';
         soundButton.disabled = false;
+        isPlaying = false;
     };
 
     // در صورت خطا
-    utterance.onerror = () => {
+    utterance.onerror = (event) => {
         icon.className = 'fas fa-volume-up';
         soundButton.disabled = false;
-        console.error('Error playing pronunciation');
+        isPlaying = false;
+        console.error('Error playing pronunciation:', event);
+        Swal.fire({
+            title: 'خطا',
+            text: 'مشکلی در پخش تلفظ پیش آمد. لطفاً دوباره تلاش کنید.',
+            icon: 'error',
+            confirmButtonText: 'باشه'
+        });
     };
-
-    speechSynthesis.speak(utterance);
 }
-
-// اطمینان از بارگذاری صداها
-speechSynthesis.onvoiceschanged = () => {
-    const voices = speechSynthesis.getVoices();
-    console.log('Available voices:', voices.filter(v => v.lang.includes('en')));
-};
 
 // نمایش کلمه روی کارت
 function displayWord(word) {
     if (!word) return;
     
-    wordTitle.textContent = word.word;
-    pronunciation.textContent = word.pronunciation;
-    meaning.textContent = word.meaning;
-    example.textContent = word.example;
-    document.getElementById('synonyms').textContent = word.synonyms.join('، ');
+    wordNumber.textContent = word.id || '';
+    wordText.textContent = word.word || '';
+    pronunciation.textContent = word.pronunciation || '';
+    definition.textContent = word.meaning || '';
+    example.textContent = word.example || '';
+    synonyms.textContent = word.synonyms ? `مترادف‌ها: ${word.synonyms}` : '';
     
-    // تنظیم عملکرد دکمه صدا
-    playPronunciationBtn.onclick = () => playPronunciation(word.word);
-    
+    // برگرداندن کارت به روی اول
+    isFlipped = false;
     flashcard.classList.remove('flipped');
 }
 
@@ -265,83 +247,29 @@ function displayWord(word) {
 function moveCard(correct) {
     if (!currentWord) return;
 
-    const currentBox = parseInt(currentWord.currentBox.replace('box', ''));
-    let newBox;
+    const { word, currentBox } = currentWord;
+    const currentBoxIndex = parseInt(currentBox.replace('box', ''));
+    let newBoxIndex;
 
     if (correct) {
-        newBox = Math.min(currentBox + 1, 5);
+        newBoxIndex = Math.min(currentBoxIndex + 1, 5);
     } else {
-        newBox = 1;
+        newBoxIndex = 1;
     }
 
-    // به‌روزرسانی آمار
-    updateDailyStats(correct);
+    // حذف کلمه از جعبه فعلی
+    window.boxes[currentBox] = window.boxes[currentBox].filter(w => w.word !== word);
 
-    // حذف از جعبه فعلی
-    window.boxes[currentWord.currentBox] = window.boxes[currentWord.currentBox].filter(
-        word => word.word !== currentWord.word
-    );
+    // اضافه کردن به جعبه جدید
+    window.boxes[`box${newBoxIndex}`].push(currentWord);
 
-    // اضافه به جعبه جدید
-    window.boxes[`box${newBox}`].push({
-        id: currentWord.id,
-        word: currentWord.word,
-        pronunciation: currentWord.pronunciation,
-        meaning: currentWord.meaning,
-        example: currentWord.example,
-        synonyms: currentWord.synonyms,
-        difficulty: currentWord.difficulty,
-        audioUrl: currentWord.audioUrl
-    });
-
+    // ذخیره تغییرات
     saveState();
-    showNewCard();
-}
-
-// بارگیری آمار
-function loadStats() {
-    const savedStats = localStorage.getItem('leitnerStats');
-    if (savedStats) {
-        const loadedStats = JSON.parse(savedStats);
-        stats.totalReviewed = loadedStats.totalReviewed || 0;
-        stats.correctAnswers = loadedStats.correctAnswers || 0;
-        stats.wrongAnswers = loadedStats.wrongAnswers || 0;
-        stats.dailyStats = loadedStats.dailyStats || {};
-        stats.lastReviewDate = loadedStats.lastReviewDate;
-    } else {
-        // مقداردهی اولیه آمار
-        stats.totalReviewed = 0;
-        stats.correctAnswers = 0;
-        stats.wrongAnswers = 0;
-        stats.dailyStats = {};
-        stats.lastReviewDate = null;
-        saveStats();
-    }
     
-    // پاکسازی آمار قدیمی
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const cutoffDate = thirtyDaysAgo.toISOString().split('T')[0];
-    
-    if (stats.dailyStats) {
-        Object.keys(stats.dailyStats).forEach(date => {
-            if (date < cutoffDate) {
-                delete stats.dailyStats[date];
-            }
-        });
-        saveStats();
-    }
-}
-
-// ذخیره آمار
-function saveStats() {
-    localStorage.setItem('leitnerStats', JSON.stringify(stats));
-}
-
-// به‌روزرسانی آمار روزانه
-function updateDailyStats(isCorrect) {
+    // به‌روزرسانی آمار
     const today = new Date().toISOString().split('T')[0];
     
+    // اطمینان از وجود آمار امروز
     if (!stats.dailyStats[today]) {
         stats.dailyStats[today] = {
             reviewed: 0,
@@ -350,10 +278,11 @@ function updateDailyStats(isCorrect) {
         };
     }
     
+    // به‌روزرسانی آمار
     stats.totalReviewed++;
     stats.dailyStats[today].reviewed++;
     
-    if (isCorrect) {
+    if (correct) {
         stats.correctAnswers++;
         stats.dailyStats[today].correct++;
     } else {
@@ -361,207 +290,47 @@ function updateDailyStats(isCorrect) {
         stats.dailyStats[today].wrong++;
     }
     
-    // حذف آمار قدیمی‌تر از 30 روز
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const cutoffDate = thirtyDaysAgo.toISOString().split('T')[0];
-    
-    Object.keys(stats.dailyStats).forEach(date => {
-        if (date < cutoffDate) {
-            delete stats.dailyStats[date];
-        }
-    });
-    
-    saveStats();
+    // ذخیره آمار در localStorage
+    localStorage.setItem('leitnerStats', JSON.stringify(stats));
 }
 
-// نمایش آمار
-function showStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const todayStats = stats.dailyStats[today] || { reviewed: 0, correct: 0, wrong: 0 };
-    const accuracy = stats.totalReviewed > 0 ? Math.round((stats.correctAnswers / stats.totalReviewed) * 100) : 0;
-    
-    // ایجاد نمودار پیشرفت
-    const chartData = Object.entries(stats.dailyStats)
-        .slice(-7) // 7 روز آخر
-        .map(([date, data]) => ({
-            date: new Date(date).toLocaleDateString('fa-IR'),
-            correct: data.correct,
-            wrong: data.wrong
-        }));
-    
-    Swal.fire({
-        title: 'آمار عملکرد شما',
-        html: `
-            <div dir="rtl" class="stats-container">
-                <div class="stats-row">
-                    <h3>آمار کلی:</h3>
-                    <p>کل لغات مرور شده: ${stats.totalReviewed}</p>
-                    <p>پاسخ‌های درست: ${stats.correctAnswers}</p>
-                    <p>پاسخ‌های نادرست: ${stats.wrongAnswers}</p>
-                    <p>درصد موفقیت: ${accuracy}%</p>
-                </div>
-                <div class="stats-row">
-                    <h3>آمار امروز:</h3>
-                    <p>لغات مرور شده: ${todayStats.reviewed}</p>
-                    <p>پاسخ‌های درست: ${todayStats.correct}</p>
-                    <p>پاسخ‌های نادرست: ${todayStats.wrong}</p>
-                </div>
-                <div class="stats-row">
-                    <h3>نمودار 7 روز اخیر:</h3>
-                    <div id="statsChart"></div>
-                </div>
-            </div>
-        `,
-        didRender: () => {
-            // رسم نمودار با Chart.js
-            const ctx = document.createElement('canvas');
-            document.getElementById('statsChart').appendChild(ctx);
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(d => d.date),
-                    datasets: [
-                        {
-                            label: 'پاسخ‌های درست',
-                            data: chartData.map(d => d.correct),
-                            backgroundColor: '#4CAF50'
-                        },
-                        {
-                            label: 'پاسخ‌های نادرست',
-                            data: chartData.map(d => d.wrong),
-                            backgroundColor: '#f44336'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        },
-        width: '600px'
-    });
-}
-
-// نمایش راهنما
-function showHelp() {
-    Swal.fire({
-        title: 'راهنمای استفاده',
-        html: `
-            <div dir="rtl">
-                <h3>سیستم لایتنر چیست؟</h3>
-                <p>سیستم لایتنر یک روش مؤثر برای یادگیری لغات است که بر اساس تکرار در فواصل زمانی مشخص کار می‌کند.</p>
-                
-                <h3>نحوه استفاده:</h3>
-                <ul>
-                    <li>کارت را مطالعه کنید</li>
-                    <li>روی کارت کلیک کنید تا برگردد</li>
-                    <li>اگر پاسخ را می‌دانستید، دکمه "درست" را بزنید</li>
-                    <li>اگر پاسخ را نمی‌دانستید، دکمه "نادرست" را بزنید</li>
-                </ul>
-
-                <h3>جعبه‌های لایتنر:</h3>
-                <ul>
-                    <li>جعبه ۱: مرور روزانه</li>
-                    <li>جعبه ۲: مرور هر ۲ روز</li>
-                    <li>جعبه ۳: مرور هر ۴ روز</li>
-                    <li>جعبه ۴: مرور هر ۷ روز</li>
-                    <li>جعبه ۵: مرور هر ۱۵ روز</li>
-                </ul>
-            </div>
-        `,
-        confirmButtonText: 'متوجه شدم'
-    });
+// ذخیره وضعیت
+function saveState() {
+    localStorage.setItem('boxes', JSON.stringify(window.boxes));
+    localStorage.setItem('boxIndices', JSON.stringify(boxIndices));
 }
 
 // Event Listeners
 flashcard.addEventListener('click', (e) => {
     // اگر روی دکمه صدا کلیک شده، از چرخش جلوگیری کن
-    if (e.target.closest('#playPronunciation')) return;
+    if (e.target.closest('.sound-btn')) return;
+    
+    isFlipped = !isFlipped;
     flashcard.classList.toggle('flipped');
 });
 
-wrongBtn.addEventListener('click', () => moveCard(false));
-correctBtn.addEventListener('click', () => moveCard(true));
-
-// نمایش مودال تنظیمات
-settingsBtn.addEventListener('click', () => {
-    settingsModal.style.display = 'block';
-});
-
-// بستن مودال با کلیک خارج از آن
-window.addEventListener('click', (e) => {
-    if (e.target === settingsModal) {
-        settingsModal.style.display = 'none';
+soundButton.addEventListener('click', () => {
+    if (currentWord) {
+        playPronunciation(currentWord.word);
     }
 });
 
-// تایید ریست کردن برنامه
-function confirmReset() {
-    Swal.fire({
-        title: 'آیا مطمئن هستید؟',
-        text: 'تمام پیشرفت شما از بین خواهد رفت!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'بله، پاک شود',
-        cancelButtonText: 'انصراف'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            localStorage.clear();
-            window.location.reload();
-        }
-    });
-}
-
-// دکمه ریست
-document.getElementById('resetBtn').addEventListener('click', confirmReset);
-
-// دکمه آمار
-statsBtn.addEventListener('click', showStats);
-
-// تغییر اندازه فونت
-document.getElementById('fontSizeSlider').addEventListener('input', (e) => {
-    settings.fontSize = parseInt(e.target.value);
-    document.getElementById('fontSizeValue').textContent = `${settings.fontSize}px`;
-    applySettings();
-    saveSettings();
+wrongBtn.addEventListener('click', () => {
+    moveCard(false);
+    showNewCard();
 });
 
-// تغییر حالت تاریک/روشن
-document.getElementById('darkModeToggle').addEventListener('change', (e) => {
-    settings.darkMode = e.target.checked;
-    applySettings();
-    saveSettings();
+correctBtn.addEventListener('click', () => {
+    moveCard(true);
+    showNewCard();
 });
-
-// تغییر تعداد سوال روزانه
-document.getElementById('dailyLimitInput').addEventListener('change', (e) => {
-    settings.dailyLimit = parseInt(e.target.value);
-    saveSettings();
-});
-
-// نمایش وضعیت جعبه‌ها
-document.getElementById('showBoxStatusBtn').addEventListener('click', showBoxStatus);
-
-helpBtn.addEventListener('click', showHelp);
-
-// اضافه کردن Chart.js به صفحه
-function loadChartJS() {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    document.head.appendChild(script);
-}
 
 // Initialize
-loadSettings();
-loadStats();
-loadChartJS();
-showNewCard(); 
+document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    
+    // فقط اگر کلمه فعلی وجود نداشت، کارت جدید نمایش داده شود
+    if (!currentWord) {
+        showNewCard();
+    }
+}); 

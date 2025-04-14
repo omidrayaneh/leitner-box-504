@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آمار - سیستم لایتنر 504</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/stats.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>سیستم لایتنر 504</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>خانه</span>
+                </a>
+                <a href="stats.html" class="nav-link active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>آمار</span>
+                </a>
+                <a href="settings.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>تنظیمات</span>
+                </a>
+                <a href="help.html" class="nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span>راهنما</span>
+                </a>
+            </div>
+        </nav>
+
+        <main>
+            <div class="stats-grid">
+                <!-- آمار کلی -->
+                <section class="stats-card">
+                    <h2>آمار کلی</h2>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <span class="stat-label">کل مرورها</span>
+                            <span class="stat-value" id="totalReviewed">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">پاسخ‌های درست</span>
+                            <span class="stat-value correct" id="totalCorrect">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">پاسخ‌های نادرست</span>
+                            <span class="stat-value wrong" id="totalWrong">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">درصد موفقیت</span>
+                            <span class="stat-value" id="totalAccuracy">0%</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- آمار امروز -->
+                <section class="stats-card">
+                    <h2>آمار امروز</h2>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <span class="stat-label">مرورهای امروز</span>
+                            <span class="stat-value" id="todayReviewed">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">پاسخ‌های درست</span>
+                            <span class="stat-value correct" id="todayCorrect">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">پاسخ‌های نادرست</span>
+                            <span class="stat-value wrong" id="todayWrong">0</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- نمودار -->
+                <section class="stats-card chart-card">
+                    <h2>نمودار عملکرد</h2>
+                    <div class="chart-container">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- تقویم حرارتی -->
+                <section class="stats-card">
+                    <h2>تقویم فعالیت</h2>
+                    <div class="heatmap" id="heatmap"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/stats.js"></script>
+</body>
+</html> 

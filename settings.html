@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنظیمات - سیستم لایتنر 504</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .settings-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .settings-section h2 {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            font-size: 1.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 6px;
+        }
+
+        .setting-item label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .setting-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Vazirmatn';
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .backup-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        #restoreFile {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>سیستم لایتنر 504</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>خانه</span>
+                </a>
+                <a href="stats.html" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>آمار</span>
+                </a>
+                <a href="settings.html" class="nav-link active">
+                    <i class="fas fa-cog"></i>
+                    <span>تنظیمات</span>
+                </a>
+                <a href="help.html" class="nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span>راهنما</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="settings-container">
+            <div class="settings-section">
+                <h2>تنظیمات ظاهری</h2>
+                <div class="setting-item">
+                    <label for="fontSizeSlider">اندازه فونت</label>
+                    <div class="setting-controls">
+                        <div class="slider-container">
+                            <input type="range" id="fontSizeSlider" min="12" max="24" value="16">
+                            <span id="fontSizeValue">16px</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label for="darkModeToggle">حالت تاریک</label>
+                    <div class="setting-controls">
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>تنظیمات مرور</h2>
+                <div class="setting-item">
+                    <label for="dailyLimitInput">تعداد سوال روزانه</label>
+                    <div class="setting-controls">
+                        <input type="number" id="dailyLimitInput" min="1" max="100" value="20">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>وضعیت جعبه‌ها</label>
+                    <div class="setting-controls">
+                        <button id="showBoxStatusBtn" class="btn btn-secondary">
+                            <i class="fas fa-box"></i>
+                            نمایش وضعیت
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>پشتیبان‌گیری و بازیابی</h2>
+                <div class="backup-controls">
+                    <button id="backupBtn" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        پشتیبان‌گیری
+                    </button>
+                    <button id="restoreBtn" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i>
+                        بازیابی
+                    </button>
+                    <input type="file" id="restoreFile" accept=".json">
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>بازنشانی</h2>
+                <div class="setting-item">
+                    <label>پاک کردن همه اطلاعات</label>
+                    <div class="setting-controls">
+                        <button id="resetBtn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            بازنشانی برنامه
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/settings.js"></script>
+</body>
+</html> 
