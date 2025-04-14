@@ -9,6 +9,136 @@
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .card-tools {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+            transform: scale(1.1);
+        }
+
+        .tool-btn.active {
+            color: white;
+            background-color: var(--primary-color);
+        }
+
+        .word-image {
+            max-width: 200px;
+            max-height: 150px;
+            margin: 10px auto;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .word-image.has-image {
+            display: block;
+        }
+
+        .examples-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .example-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .example-item:hover {
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .notes-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .notes-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Vazirmatn';
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .difficulty-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .difficulty-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+        }
+
+        .difficulty-dot.active {
+            background-color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .word-image {
+                max-width: 150px;
+                max-height: 100px;
+            }
+        }
+
+        /* SweetAlert2 Font Customization */
+        .swal2-popup,
+        .swal2-title,
+        .swal2-content,
+        .swal2-html-container,
+        .swal2-confirm,
+        .swal2-cancel,
+        .swal2-input,
+        .swal2-textarea {
+            font-family: 'Vazirmatn' !important;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            font-size: 1em !important;
+            font-weight: normal !important;
+            padding: 8px 20px !important;
+        }
+
+        .swal2-textarea {
+            text-align: right !important;
+            direction: rtl !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -39,45 +169,68 @@
         <main>
             <div class="card-container">
                 <div class="flashcard">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <div class="word-header">
-                                <span class="word-number" id="wordNumber">1</span>
-                                <h2 class="word-text" id="wordText">abandon</h2>
-                                <button class="sound-btn" id="soundButton">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                            </div>
-                            <p class="pronunciation" id="pronunciation">/əˈbændən/</p>
+                    <div class="front">
+                        <span id="wordNumber" class="word-number"></span>
+                        <h2 id="wordText"></h2>
+                        <button id="soundButton" class="sound-btn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="difficulty-dots">
+                            <span class="difficulty-dot" data-level="1"></span>
+                            <span class="difficulty-dot" data-level="2"></span>
+                            <span class="difficulty-dot" data-level="3"></span>
                         </div>
-                        <div class="card-back">
-                            <div class="word-details">
-                                <div class="meaning-section">
-                                    <h3>معنی</h3>
-                                    <p id="definition">ترک کردن، رها کردن</p>
+                        <div class="control-buttons">
+                            <button id="wrongBtn" class="control-btn wrong">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button id="correctBtn" class="control-btn correct">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <div class="back-content">
+                            <div class="main-section">
+                                <div class="pronunciation-section">
+                                    <span id="pronunciation" class="pronunciation"></span>
                                 </div>
-                                <div class="example-section">
-                                    <h3>مثال</h3>
-                                    <p id="example">The soldiers were forced to abandon their position.</p>
+                                <div class="meaning-section">
+                                    <p id="definition" class="definition"></p>
+                                </div>
+                                <div class="examples-section">
+                                    <ul id="examplesList" class="examples-list"></ul>
                                 </div>
                                 <div class="synonyms-section">
-                                    <h3>مترادف‌ها</h3>
-                                    <p id="synonyms">desert, forsake, leave</p>
+                                    <div class="synonyms-header">Synonyms:</div>
+                                    <p id="synonyms" class="synonyms"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="tools-section">
+                                <div class="card-tools">
+                                    <button id="addNoteBtn" class="tool-btn" title="افزودن یادداشت">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </button>
+                                    <button id="addImageBtn" class="tool-btn" title="افزودن تصویر">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                    <button id="addExampleBtn" class="tool-btn" title="افزودن مثال">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="extras-section">
+                                <div id="wordImageContainer" class="image-container">
+                                    <img id="wordImage" class="word-image" src="" alt="">
+                                </div>
+                                <div id="personalNoteContainer" class="note-container">
+                                    <textarea id="personalNote" class="notes-input" placeholder="یادداشت شخصی..." readonly></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card-controls">
-                    <button id="wrongBtn" class="control-btn wrong">
-                        <i class="fas fa-times"></i>
-                        نادرست
-                    </button>
-                    <button id="correctBtn" class="control-btn correct">
-                        <i class="fas fa-check"></i>
-                        درست
-                    </button>
                 </div>
             </div>
         </main>

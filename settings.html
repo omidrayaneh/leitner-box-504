@@ -14,20 +14,45 @@
             max-width: 800px;
             margin: 2rem auto;
             padding: 2rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .settings-section {
+            background: var(--card-bg);
+            border-radius: 12px;
             margin-bottom: 2rem;
             padding: 1.5rem;
-            background: var(--bg-color);
-            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .settings-section h2 {
-            margin-bottom: 1rem;
+        .settings-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow-color);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-header i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 10px;
+        }
+
+        .section-header h2 {
+            margin: 0;
             color: var(--text-color);
             font-size: 1.5rem;
         }
@@ -35,24 +60,43 @@
         .setting-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
             padding: 1rem;
-            background: var(--card-bg);
-            border-radius: 6px;
+            margin-bottom: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+            transition: transform 0.2s ease;
         }
 
-        .setting-item label {
-            font-weight: bold;
-            color: var(--text-color);
+        .setting-item:hover {
+            transform: translateX(-5px);
         }
 
-        .setting-controls {
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
+        .setting-label i {
+            color: var(--primary-color);
+        }
+
+        .setting-description {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .setting-control {
+            min-width: 200px;
+        }
+
+        /* کنترل‌های خاص */
         .slider-container {
             display: flex;
             align-items: center;
@@ -60,16 +104,25 @@
         }
 
         input[type="range"] {
-            width: 200px;
+            flex: 1;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            appearance: none;
         }
 
-        input[type="number"] {
-            width: 80px;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--input-bg);
-            color: var(--text-color);
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
         }
 
         .switch {
@@ -92,7 +145,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: var(--border-color);
             transition: .4s;
             border-radius: 34px;
         }
@@ -110,7 +163,7 @@
         }
 
         input:checked + .slider {
-            background-color: #2196F3;
+            background-color: var(--primary-color);
         }
 
         input:checked + .slider:before {
@@ -120,16 +173,28 @@
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-family: 'Vazirmatn';
             font-size: 1rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             transition: all 0.3s ease;
         }
 
+        .btn i {
+            font-size: 1.2rem;
+        }
+
         .btn-primary {
-            background-color: #2196F3;
+            background-color: var(--primary-color);
             color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-color);
         }
 
         .btn-danger {
@@ -137,93 +202,60 @@
             color: white;
         }
 
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
         .btn:hover {
+            transform: translateY(-2px);
             opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .backup-controls {
             display: flex;
             gap: 1rem;
-            margin-top: 1rem;
+            flex-wrap: wrap;
         }
 
-        #restoreFile {
-            display: none;
-        }
-
-        /* New Styles */
-        .form-select {
-            width: 200px;
-            padding: 0.5rem;
+        select.form-select {
+            width: 100%;
+            padding: 0.75rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--card-bg);
+            border-radius: 8px;
+            background: var(--bg-color);
             color: var(--text-color);
             font-family: 'Vazirmatn';
+            cursor: pointer;
         }
 
         input[type="time"] {
-            padding: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--card-bg);
+            border-radius: 8px;
+            background: var(--bg-color);
             color: var(--text-color);
             font-family: 'Vazirmatn';
         }
 
-        .sorted-words {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-
-        .word-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background: var(--bg-color);
-            border-radius: 4px;
-        }
-
-        .word-text {
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .word-box {
-            color: var(--primary-color);
-            background: rgba(33, 150, 243, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        .word-review {
-            color: var(--text-color);
-            font-size: 0.9em;
-        }
-
-        .word-difficulty {
-            color: var(--warning-color);
-            font-size: 0.9em;
-        }
-
         @media (max-width: 768px) {
-            .word-item {
+            .settings-container {
+                padding: 1rem;
+            }
+
+            .setting-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 1rem;
+            }
+
+            .setting-control {
+                width: 100%;
+            }
+
+            .backup-controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -256,10 +288,19 @@
 
         <main class="settings-container">
             <div class="settings-section">
-                <h2>تنظیمات ظاهری</h2>
+                <div class="section-header">
+                    <i class="fas fa-palette"></i>
+                    <h2>تنظیمات ظاهری</h2>
+                </div>
                 <div class="setting-item">
-                    <label for="fontSizeSlider">اندازه فونت</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-text-height"></i>
+                            <label for="fontSizeSlider">اندازه فونت</label>
+                        </div>
+                        <div class="setting-description">اندازه متن را برای خواندن راحت‌تر تنظیم کنید</div>
+                    </div>
+                    <div class="setting-control">
                         <div class="slider-container">
                             <input type="range" id="fontSizeSlider" min="12" max="24" value="16">
                             <span id="fontSizeValue">16px</span>
@@ -267,8 +308,14 @@
                     </div>
                 </div>
                 <div class="setting-item">
-                    <label for="darkModeToggle">حالت تاریک</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-moon"></i>
+                            <label for="darkModeToggle">حالت تاریک</label>
+                        </div>
+                        <div class="setting-description">برای استفاده در نور کم یا شب</div>
+                    </div>
+                    <div class="setting-control">
                         <label class="switch">
                             <input type="checkbox" id="darkModeToggle">
                             <span class="slider"></span>
@@ -278,35 +325,43 @@
             </div>
 
             <div class="settings-section">
-                <h2>تنظیمات مرور</h2>
+                <div class="section-header">
+                    <i class="fas fa-clock"></i>
+                    <h2>تنظیمات مرور</h2>
+                </div>
                 <div class="setting-item">
-                    <label for="dailyLimitInput">تعداد سوال روزانه</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-list-ol"></i>
+                            <label for="dailyLimitInput">تعداد سوال روزانه</label>
+                        </div>
+                        <div class="setting-description">تعداد لغاتی که می‌خواهید هر روز مرور کنید</div>
+                    </div>
+                    <div class="setting-control">
                         <input type="number" id="dailyLimitInput" min="1" max="100" value="20">
                     </div>
                 </div>
                 <div class="setting-item">
-                    <label>وضعیت جعبه‌ها</label>
-                    <div class="setting-controls">
-                        <button id="showBoxStatusBtn" class="btn btn-secondary">
-                            <i class="fas fa-box"></i>
-                            نمایش وضعیت
-                        </button>
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-bell"></i>
+                            <label for="reviewTimeInput">ساعت یادآوری</label>
+                        </div>
+                        <div class="setting-description">زمان دریافت یادآوری روزانه برای مرور لغات</div>
                     </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h2>تنظیمات زمان مرور</h2>
-                <div class="setting-item">
-                    <label for="reviewTimeInput">ساعت یادآوری مرور روزانه</label>
-                    <div class="setting-controls">
+                    <div class="setting-control">
                         <input type="time" id="reviewTimeInput" value="09:00">
                     </div>
                 </div>
                 <div class="setting-item">
-                    <label for="notificationToggle">فعال‌سازی نوتیفیکیشن</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-bell"></i>
+                            <label for="notificationToggle">فعال‌سازی نوتیفیکیشن</label>
+                        </div>
+                        <div class="setting-description">دریافت یادآوری روزانه برای مرور لغات</div>
+                    </div>
+                    <div class="setting-control">
                         <label class="switch">
                             <input type="checkbox" id="notificationToggle">
                             <span class="slider"></span>
@@ -316,10 +371,19 @@
             </div>
 
             <div class="settings-section">
-                <h2>مرتب‌سازی لغات</h2>
+                <div class="section-header">
+                    <i class="fas fa-sort-alpha-down"></i>
+                    <h2>مرتب‌سازی لغات</h2>
+                </div>
                 <div class="setting-item">
-                    <label for="sortTypeSelect">نحوه مرتب‌سازی لغات</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-sort"></i>
+                            <label for="sortTypeSelect">نحوه مرتب‌سازی</label>
+                        </div>
+                        <div class="setting-description">ترتیب نمایش لغات را مشخص کنید</div>
+                    </div>
+                    <div class="setting-control">
                         <select id="sortTypeSelect" class="form-select">
                             <option value="alphabetical">بر اساس حروف الفبا</option>
                             <option value="difficulty">بر اساس سختی</option>
@@ -331,35 +395,59 @@
             </div>
 
             <div class="settings-section">
-                <h2>پشتیبان‌گیری و بازیابی</h2>
-                <div class="backup-controls">
-                    <button id="backupBtn" class="btn btn-primary">
-                        <i class="fas fa-download"></i>
-                        پشتیبان‌گیری
-                    </button>
-                    <button id="restoreBtn" class="btn btn-secondary">
-                        <i class="fas fa-upload"></i>
-                        بازیابی
-                    </button>
-                    <input type="file" id="restoreFile" accept=".json">
+                <div class="section-header">
+                    <i class="fas fa-box"></i>
+                    <h2>وضعیت جعبه‌ها</h2>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-info-circle"></i>
+                            <label>مشاهده وضعیت</label>
+                        </div>
+                        <div class="setting-description">تعداد لغات در هر جعبه و وضعیت مرور امروز</div>
+                    </div>
+                    <div class="setting-control">
+                        <button id="showBoxStatusBtn" class="btn btn-secondary">
+                            <i class="fas fa-box-open"></i>
+                            نمایش وضعیت
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="settings-section">
-                <h2>بازنشانی</h2>
+                <div class="section-header">
+                    <i class="fas fa-database"></i>
+                    <h2>پشتیبان‌گیری و بازیابی</h2>
+                </div>
                 <div class="setting-item">
-                    <label>پاک کردن همه اطلاعات</label>
-                    <div class="setting-controls">
+                    <div class="setting-info">
+                        <div class="setting-label">
+                            <i class="fas fa-save"></i>
+                            <label>مدیریت اطلاعات</label>
+                        </div>
+                        <div class="setting-description">پشتیبان‌گیری و بازیابی اطلاعات برنامه</div>
+                    </div>
+                    <div class="setting-control backup-controls">
+                        <button id="backupBtn" class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            پشتیبان‌گیری
+                        </button>
+                        <button id="restoreBtn" class="btn btn-secondary">
+                            <i class="fas fa-upload"></i>
+                            بازیابی
+                        </button>
+                        <input type="file" id="restoreFile" accept=".json" style="display: none;">
                         <button id="resetBtn" class="btn btn-danger">
-                            <i class="fas fa-trash"></i>
-                            بازنشانی برنامه
+                            <i class="fas fa-trash-alt"></i>
+                            بازنشانی
                         </button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-
     <script src="js/settings.js"></script>
 </body>
 </html> 
