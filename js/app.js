@@ -38,6 +38,15 @@ const boxIndices = {
 let dailyQuestionCount = 0;
 let lastReviewDate = new Date().toDateString();
 
+// آمار کاربر
+const stats = {
+    totalReviewed: 0,
+    correctAnswers: 0,
+    wrongAnswers: 0,
+    dailyStats: {},
+    lastReviewDate: null
+};
+
 // بازیابی تنظیمات
 function loadSettings() {
     const savedSettings = localStorage.getItem('leitnerSettings');
@@ -261,11 +270,12 @@ function moveCard(correct) {
 
     if (correct) {
         newBox = Math.min(currentBox + 1, 5);
-        window.stats.correctAnswers++;
     } else {
         newBox = 1;
-        window.stats.wrongAnswers++;
     }
+
+    // به‌روزرسانی آمار
+    updateDailyStats(correct);
 
     // حذف از جعبه فعلی
     window.boxes[currentWord.currentBox] = window.boxes[currentWord.currentBox].filter(
@@ -284,28 +294,158 @@ function moveCard(correct) {
         audioUrl: currentWord.audioUrl
     });
 
-    window.stats.totalReviewed++;
-    window.stats.lastReviewDate = new Date().toISOString();
-    
     saveState();
-    saveStats();
     showNewCard();
+}
+
+// بارگیری آمار
+function loadStats() {
+    const savedStats = localStorage.getItem('leitnerStats');
+    if (savedStats) {
+        const loadedStats = JSON.parse(savedStats);
+        stats.totalReviewed = loadedStats.totalReviewed || 0;
+        stats.correctAnswers = loadedStats.correctAnswers || 0;
+        stats.wrongAnswers = loadedStats.wrongAnswers || 0;
+        stats.dailyStats = loadedStats.dailyStats || {};
+        stats.lastReviewDate = loadedStats.lastReviewDate;
+    } else {
+        // مقداردهی اولیه آمار
+        stats.totalReviewed = 0;
+        stats.correctAnswers = 0;
+        stats.wrongAnswers = 0;
+        stats.dailyStats = {};
+        stats.lastReviewDate = null;
+        saveStats();
+    }
+    
+    // پاکسازی آمار قدیمی
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const cutoffDate = thirtyDaysAgo.toISOString().split('T')[0];
+    
+    if (stats.dailyStats) {
+        Object.keys(stats.dailyStats).forEach(date => {
+            if (date < cutoffDate) {
+                delete stats.dailyStats[date];
+            }
+        });
+        saveStats();
+    }
+}
+
+// ذخیره آمار
+function saveStats() {
+    localStorage.setItem('leitnerStats', JSON.stringify(stats));
+}
+
+// به‌روزرسانی آمار روزانه
+function updateDailyStats(isCorrect) {
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (!stats.dailyStats[today]) {
+        stats.dailyStats[today] = {
+            reviewed: 0,
+            correct: 0,
+            wrong: 0
+        };
+    }
+    
+    stats.totalReviewed++;
+    stats.dailyStats[today].reviewed++;
+    
+    if (isCorrect) {
+        stats.correctAnswers++;
+        stats.dailyStats[today].correct++;
+    } else {
+        stats.wrongAnswers++;
+        stats.dailyStats[today].wrong++;
+    }
+    
+    // حذف آمار قدیمی‌تر از 30 روز
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const cutoffDate = thirtyDaysAgo.toISOString().split('T')[0];
+    
+    Object.keys(stats.dailyStats).forEach(date => {
+        if (date < cutoffDate) {
+            delete stats.dailyStats[date];
+        }
+    });
+    
+    saveStats();
 }
 
 // نمایش آمار
 function showStats() {
+    const today = new Date().toISOString().split('T')[0];
+    const todayStats = stats.dailyStats[today] || { reviewed: 0, correct: 0, wrong: 0 };
+    const accuracy = stats.totalReviewed > 0 ? Math.round((stats.correctAnswers / stats.totalReviewed) * 100) : 0;
+    
+    // ایجاد نمودار پیشرفت
+    const chartData = Object.entries(stats.dailyStats)
+        .slice(-7) // 7 روز آخر
+        .map(([date, data]) => ({
+            date: new Date(date).toLocaleDateString('fa-IR'),
+            correct: data.correct,
+            wrong: data.wrong
+        }));
+    
     Swal.fire({
-        title: 'آمار یادگیری',
+        title: 'آمار عملکرد شما',
         html: `
-            <div dir="rtl">
-                <p>تعداد کل مرور: ${window.stats.totalReviewed}</p>
-                <p>پاسخ‌های درست: ${window.stats.correctAnswers}</p>
-                <p>پاسخ‌های نادرست: ${window.stats.wrongAnswers}</p>
-                <p>درصد موفقیت: ${Math.round((window.stats.correctAnswers / window.stats.totalReviewed) * 100 || 0)}%</p>
-                <p>آخرین مرور: ${window.stats.lastReviewDate ? new Date(window.stats.lastReviewDate).toLocaleDateString('fa-IR') : 'هیچ'}</p>
+            <div dir="rtl" class="stats-container">
+                <div class="stats-row">
+                    <h3>آمار کلی:</h3>
+                    <p>کل لغات مرور شده: ${stats.totalReviewed}</p>
+                    <p>پاسخ‌های درست: ${stats.correctAnswers}</p>
+                    <p>پاسخ‌های نادرست: ${stats.wrongAnswers}</p>
+                    <p>درصد موفقیت: ${accuracy}%</p>
+                </div>
+                <div class="stats-row">
+                    <h3>آمار امروز:</h3>
+                    <p>لغات مرور شده: ${todayStats.reviewed}</p>
+                    <p>پاسخ‌های درست: ${todayStats.correct}</p>
+                    <p>پاسخ‌های نادرست: ${todayStats.wrong}</p>
+                </div>
+                <div class="stats-row">
+                    <h3>نمودار 7 روز اخیر:</h3>
+                    <div id="statsChart"></div>
+                </div>
             </div>
         `,
-        confirmButtonText: 'بستن'
+        didRender: () => {
+            // رسم نمودار با Chart.js
+            const ctx = document.createElement('canvas');
+            document.getElementById('statsChart').appendChild(ctx);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'پاسخ‌های درست',
+                            data: chartData.map(d => d.correct),
+                            backgroundColor: '#4CAF50'
+                        },
+                        {
+                            label: 'پاسخ‌های نادرست',
+                            data: chartData.map(d => d.wrong),
+                            backgroundColor: '#f44336'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        },
+        width: '600px'
     });
 }
 
@@ -341,7 +481,7 @@ function showHelp() {
 }
 
 // Event Listeners
-document.getElementById('flashcard').addEventListener('click', (e) => {
+flashcard.addEventListener('click', (e) => {
     // اگر روی دکمه صدا کلیک شده، از چرخش جلوگیری کن
     if (e.target.closest('#playPronunciation')) return;
     flashcard.classList.toggle('flipped');
@@ -413,6 +553,15 @@ document.getElementById('showBoxStatusBtn').addEventListener('click', showBoxSta
 
 helpBtn.addEventListener('click', showHelp);
 
+// اضافه کردن Chart.js به صفحه
+function loadChartJS() {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    document.head.appendChild(script);
+}
+
 // Initialize
 loadSettings();
+loadStats();
+loadChartJS();
 showNewCard(); 

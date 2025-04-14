@@ -24,22 +24,22 @@
 
         <main>
             <div class="card-container">
-                <div class="flashcard" id="flashcard">
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <h2 id="wordTitle" class="word-title"></h2>
-                            <p id="pronunciation" class="pronunciation"></p>
-                            <button id="playPronunciation" class="sound-btn">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                        </div>
-                        <div class="card-back">
-                            <h3>معنی:</h3>
-                            <p id="meaning" class="meaning"></p>
-                            <h3>مثال:</h3>
-                            <p id="example" class="example"></p>
-                            <h3>مترادف‌ها:</h3>
-                            <p id="synonyms" class="synonyms"></p>
+                <div class="flashcard">
+                    <div class="card-front">
+                        <h2 id="wordTitle"></h2>
+                        <p id="pronunciation"></p>
+                        <button id="playPronunciation" class="sound-btn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <div class="content">
+                            <p class="meaning-label">معنی:</p>
+                            <p id="meaning"></p>
+                            <p class="example-label">مثال:</p>
+                            <p id="example"></p>
+                            <p class="synonyms-label">مترادف‌ها:</p>
+                            <p id="synonyms"></p>
                         </div>
                     </div>
                 </div>

@@ -61,6 +61,11 @@ nav button {
     color: white;
     cursor: pointer;
     font-size: var(--font-size);
+    transition: background-color 0.3s;
+}
+
+nav button:hover {
+    background-color: #388e3c;
 }
 
 .card-container {
@@ -90,59 +95,52 @@ nav button {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-front {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
 }
 
 .card-back {
     transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
-.word-title {
-    font-size: calc(var(--font-size) * 1.5);
-    margin-bottom: 10px;
+.card-back .content {
+    text-align: right;
+    padding: 10px;
+}
+
+#wordTitle {
+    font-size: calc(var(--font-size) * 2);
+    margin-bottom: 15px;
     color: var(--text-color);
 }
 
-.pronunciation {
-    font-size: var(--font-size);
+#pronunciation {
+    font-size: calc(var(--font-size) * 1.2);
     color: #666;
     margin-bottom: 20px;
 }
 
-.meaning, .example, .synonyms {
-    font-size: var(--font-size);
-    margin: 10px 0;
+.meaning-label, .example-label, .synonyms-label {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: calc(var(--font-size) * 1.1);
+}
+
+#meaning, #example, #synonyms {
+    margin: 5px 0;
+    line-height: 1.5;
     color: var(--text-color);
-}
-
-.controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.control-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     font-size: var(--font-size);
-    transition: background-color 0.3s;
-}
-
-.wrong {
-    background-color: var(--danger-color);
-    color: white;
-}
-
-.correct {
-    background-color: var(--primary-color);
-    color: white;
 }
 
 .sound-btn {
@@ -152,6 +150,7 @@ nav button {
     font-size: calc(var(--font-size) * 1.5);
     color: var(--text-color);
     padding: 10px;
+    margin-top: 10px;
 }
 
 .sound-btn:disabled {
@@ -199,6 +198,67 @@ nav button {
     min-width: 50px;
 }
 
+/* Control buttons */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.control-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: var(--font-size);
+    transition: transform 0.2s, background-color 0.3s;
+    min-width: 120px;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.wrong {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.wrong:hover {
+    background-color: #d32f2f;
+}
+
+.correct {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.correct:hover {
+    background-color: #388e3c;
+}
+
+/* Modal buttons */
+#showBoxStatusBtn {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background-color 0.3s;
+}
+
+#showBoxStatusBtn:hover {
+    background-color: #388e3c;
+}
+
 .danger-btn {
     background-color: var(--danger-color);
     color: white;
@@ -209,6 +269,11 @@ nav button {
     cursor: pointer;
     font-size: var(--font-size);
     margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.danger-btn:hover {
+    background-color: #d32f2f;
 }
 
 /* Responsive design */
@@ -242,17 +307,35 @@ nav button {
     border-radius: 4px;
 }
 
-#showBoxStatusBtn {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 10px 0;
+/* Statistics styles */
+.stats-container {
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-#showBoxStatusBtn:hover {
-    background-color: #45a049;
+.stats-row {
+    margin-bottom: 30px;
+    padding: 15px;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stats-row h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: calc(var(--font-size) * 1.2);
+}
+
+.stats-row p {
+    margin: 8px 0;
+    font-size: var(--font-size);
+    color: var(--text-color);
+}
+
+#statsChart {
+    width: 100%;
+    height: 300px;
+    margin-top: 15px;
 } 
