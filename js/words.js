@@ -1,5 +1,4 @@
 const words504 = [
-    const words504 = [
         {
                 "id": 1,
                 "word": "abandon",
