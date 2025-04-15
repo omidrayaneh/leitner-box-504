@@ -2159,9 +2159,6 @@ const words504 = [
             "synonyms": [],
             "difficulty": "medium"
         },
-        JSON
-    
-    [
         {
             "id": 241,
             "word": "plea",
@@ -4537,7 +4534,7 @@ const words504 = [
             "synonyms": [],
             "difficulty": "medium"
         }
-        ];
+];
 
 // تقسیم‌بندی جعبه‌های لایتنر
 window.boxes = {
